@@ -60,6 +60,9 @@ func main() {
 }
 
 func createApiMessage(config *Config, name string, file io.Reader) (string, *bytes.Buffer, error) {
+	if config == nil {
+		return "", nil, fmt.Errorf("config cannot be nil.")
+	}
 	var buffer bytes.Buffer
 	// Create multipart message.
 	multiPartBuffer := multipart.NewWriter(&buffer)
