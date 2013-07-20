@@ -18,45 +18,55 @@ func main() {
 	if err != nil {
 		log.Fatalf("%s\n", err.Error())
 	}
-
 	// Verify program arguments.
 	if len(os.Args) < 2 {
 		log.Fatalf("Please specify the nzb file to submit.\n")
 	}
+	// Read program arguments.
+	filePath := os.Args[1]
+	// Submit NZB file.
+	if err = submitNzbFile(config, filePath); err != nil {
+		log.Fatalf("Error during submission: %s\n", err.Error())
+	}
+	// Optionally remove NZB file.
+	if config.Delete {
+		if err = os.Remove(filePath); err != nil {
+			log.Fatalf("Error while removing NZB file: %s\n", err.Error())
+		}
+	}
+}
 
+func submitNzbFile(config *Config, filePath string) error {
 	// Open nzb file
-	fileHandle, err := os.Open(os.Args[1])
+	fileHandle, err := os.Open(filePath)
 	if err != nil {
-		log.Fatalf("Cannot open specified file: %s\n", err.Error())
+		return fmt.Errorf("Cannot open specified file: %s\n", err.Error())
 	}
 	defer fileHandle.Close()
-	fileName := filepath.Base(os.Args[1])
-
+	fileName := filepath.Base(filePath)
 	// Generate message body
 	boundary, content, err := createApiMessage(config, fileName, fileHandle)
 	if err != nil {
-		log.Fatalf("Error while creating API message: %s\n", err.Error())
+		return fmt.Errorf("Error while creating API message: %s\n", err.Error())
 	}
-
 	// Create POST request
 	request, err := http.NewRequest("POST", config.Url, content)
 	if err != nil {
-		log.Fatalf("Failed to create new request: %s\n", err.Error())
+		return fmt.Errorf("Failed to create new request: %s\n", err.Error())
 	}
-
 	// Set the necessary header
 	request.Header.Set("Content-Type", "multipart/form-data; charset=UTF-8; boundary="+boundary)
-
 	// Send multipart message by POST request.
 	client := new(http.Client)
 	resp, err := client.Do(request)
 	if err != nil {
-		log.Fatalf("Error during POST: %s", err.Error())
+		return fmt.Errorf("Error during POST: %s", err.Error())
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != 200 {
-		log.Printf("Unexpected HTTP status returned: %d: %s\n", resp.StatusCode, resp.Status)
+		return fmt.Errorf("Unexpected HTTP status returned: %d: %s\n", resp.StatusCode, resp.Status)
 	}
+	return nil
 }
 
 func createApiMessage(config *Config, name string, file io.Reader) (string, *bytes.Buffer, error) {

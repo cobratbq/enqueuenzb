@@ -9,6 +9,7 @@ import (
 type Config struct {
 	Url string
 	Key string
+	Delete bool
 }
 
 func readConfig(filePath string) (*Config, error) {

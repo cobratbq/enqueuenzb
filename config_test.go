@@ -30,4 +30,7 @@ func TestReadConfig(t *testing.T) {
 	if config.Key != "YourSABnzbdApiOrNzbKey" {
 		t.Errorf("Unexpected Key")
 	}
+	if config.Delete != true {
+		t.Errorf("Expected value for Delete is true.")
+	}
 }
