@@ -7,7 +7,8 @@ Submit an NZB file to the SABnzbd download queue.
 
 usage
 -----
-> enqueuenzb <nzb-file>
+> enqueuenzb &lt;nzb-file&gt;
+
 Where nzb-file is the NZB file you want to submit to SABnzbd.
 
 config
