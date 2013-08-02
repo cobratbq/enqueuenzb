@@ -22,16 +22,17 @@ func main() {
 	if len(os.Args) < 2 {
 		log.Fatalf("Please specify the nzb file to submit.\n")
 	}
-	// Read program arguments.
-	filePath := os.Args[1]
-	// Submit NZB file.
-	if err = submitNzbFile(config, filePath); err != nil {
-		log.Fatalf("Error during submission: %s\n", err.Error())
-	}
-	// Optionally remove NZB file.
-	if config.Delete {
-		if err = os.Remove(filePath); err != nil {
-			log.Fatalf("Error while removing NZB file: %s\n", err.Error())
+
+	for _, filePath := range os.Args[1:] {
+		// Submit NZB file.
+		if err = submitNzbFile(config, filePath); err != nil {
+			log.Fatalf("Error during submission: %s\n", err.Error())
+		}
+		// Optionally remove NZB file.
+		if config.Delete {
+			if err = os.Remove(filePath); err != nil {
+				log.Fatalf("Error while removing NZB file: %s\n", err.Error())
+			}
 		}
 	}
 }
