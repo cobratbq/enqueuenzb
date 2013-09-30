@@ -7,9 +7,10 @@ import (
 )
 
 type Config struct {
-	Url string
-	Key string
-	Delete bool
+	Url     string
+	Key     string
+	Delete  bool
+	Verbose bool
 }
 
 func readConfig(filePath string) (*Config, error) {

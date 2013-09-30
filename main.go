@@ -34,6 +34,9 @@ func main() {
 				log.Fatalf("Error while removing NZB file: %s\n", err.Error())
 			}
 		}
+		if config.Verbose {
+			log.Printf("Submitted: %s\n", filePath)
+		}
 	}
 }
 
